@@ -1,0 +1,84 @@
+#docker run -it -d --name aserver quay.io/centos/centos:latest
+#docker run -it -d --name node1 quay.io/centos/centos:latest
+#docker run -it -d --name node2 quay.io/centos/centos:latest
+
+#docker exec -it aserver bash
+  > #apt-get update -y
+  iptuils-ping for ping command, net-tools for ifconfig command, nfs we will use it for mounting our folder from base system so that our config file and yaml files will be persistent
+  > #apt-get install vim *ansible* openssh-server iputils-ping net-tools nfs* -y
+  By default root login is disabled for security reason, so let's enable it for our practice
+  > #vim /etc/ssh/sshd_config
+  Go to line no 42 PermitRootLogin remove comment and make yes
+  > #service ssh start
+  > #service ssh status
+  > #passwd -> to set password for root
+    give redhat
+  > #exit
+
+#docker exec -it node1 bash
+  > #apt-get update -y
+  > #apt-get install openssh-server iputils-ping net-tools vim -y
+  > #vim /etc/ssh/sshd_config
+  Go to line no 42 PermitRootLogin remove comment and make yes
+  > #service ssh start
+  > #Service ssh status
+  > #passwd -> to set password for root
+    give redhat
+  > #exit
+
+#docker exec -it node2 bash
+  > #apt-get update -y
+  > #apt-get install openssh-server iputils-ping net-tools vim -y
+  > #vim /etc/ssh/sshd_config
+  Go to line no 42 PermitRootLogin remove comment and make yes
+  > #service ssh start
+  > #Service ssh status
+  > #passwd -> to set password for root
+    give redhat
+  > #exit
+
+Create NFS server on base machine:
+#yum install nfs* -y
+#mkdir /myshare
+#vim /etc/expoerts
+/myshare *(rw,sync)
+#systemctl restart nfs-server
+#systemctl enable nfs-server
+  
+Run below commands to get IP address of node1 and node2:
+#docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' node1
+#docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' node2
+
+Copy both IP address
+#docker exec -it aserver bash
+  > #vim /etc/hosts
+    NODE1IP node1
+    NODE2IP node2
+  > #ssh-keygen
+  > #ssh-copy-id root@node1
+  > #ssh-copy-id root@node2
+  In new versions /etc/ansible/hosts file and /etc/ansible/config is not visible as Ansible recommends to create own files
+  Let's mount our NFS so file will be persistent
+  > #mkdir /mymount
+  > #mount -t nfs <BASE MACHINE IP>:/myshare /mymount 
+  > #df -h -> we will see it's mounted
+  > #cd /mymount
+  > #mkdir config
+  > #cd config
+  #vim myservers
+  node1
+  node2
+  #vim ansible.cfg
+  [defaults]
+  inventory=myservers
+  #ansible all -m ping
+
+Let's build our own image using these containers:
+#docker commit aserver docker.io/gauravkumar9130/aserver
+#docker commit node1 docker.io/gauravkumar9130/anode1
+#docker commit node2 docker.io/gauravkumar9130/anode2
+
+#docker login 
+#docker push docker.io/gauravkumar9130/aserver
+#docker push docker.io/gauravkumar9130/anode2
+#docker push docker.io/gauravkumar9130/anode2
