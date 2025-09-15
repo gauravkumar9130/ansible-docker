@@ -1,6 +1,6 @@
-#docker run -it -d --name aserver quay.io/centos/centos:latest
-#docker run -it -d --name node1 quay.io/centos/centos:latest
-#docker run -it -d --name node2 quay.io/centos/centos:latest
+#docker run -it -d --name aserver docker.io/ubuntu
+#docker run -it -d --name node1 docker.io/ubuntu
+#docker run -it -d --name node2 docker.io/ubuntu
 
 #docker exec -it aserver bash
   > #apt-get update -y
@@ -57,7 +57,7 @@ Copy both IP address
   > #ssh-keygen
   > #ssh-copy-id root@node1
   > #ssh-copy-id root@node2
-  In new versions /etc/ansible/hosts file and /etc/ansible/config is not visible as Ansible recommends to create own files
+  In Ubuntu /etc/ansible/hosts file and /etc/ansible/config is not available as Ansible recommends to create own files
   Let's mount our NFS so file will be persistent
   > #mkdir /mymount
   > #mount -t nfs <BASE MACHINE IP>:/myshare /mymount 
