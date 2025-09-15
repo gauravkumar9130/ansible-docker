@@ -1,38 +1,38 @@
-#docker run -it -d --name aserver docker.io/ubuntu
-#docker run -it -d --name node1 docker.io/ubuntu
-#docker run -it -d --name node2 docker.io/ubuntu
+#docker run -d --name aserver --privileged --cgroupns=host -v /sys/fs/cgroup:/sys/fs/cgroup:rw quay.io/centos/centos /sbin/init
+#docker run -d --name node1 --privileged --cgroupns=host -v /sys/fs/cgroup:/sys/fs/cgroup:rw quay.io/centos/centos /sbin/init
+#docker run -d --name node2 --privileged --cgroupns=host -v /sys/fs/cgroup:/sys/fs/cgroup:rw quay.io/centos/centos /sbin/init
 
 #docker exec -it aserver bash
-  > #apt-get update -y
-  iptuils-ping for ping command, net-tools for ifconfig command, nfs we will use it for mounting our folder from base system so that our config file and yaml files will be persistent
-  > #apt-get install sudo vim *ansible* openssh-server iputils-ping net-tools nfs* -y
+  sudo for giving admin access to user, iptuils for ping command, net-tools for ifconfig command, nfs we will use it for mounting our folder from base system so that our config file and yaml files will be persistent
+  > #yum -y install iputils vim net-tools firewalld openssh-server openssh-clients sudo epel-release nfs-utils -y
   By default root login is disabled for security reason, so let's enable it for our practice
   > #vim /etc/ssh/sshd_config
-  Go to line no 42 PermitRootLogin remove comment and make yes
-  > #service ssh start
-  > #service ssh status
+  Go to line no 40 PermitRootLogin remove comment and make yes
+  > #systemctl start sshd firewalld
+  > #systemctl enable sshd firewalld
   > #passwd -> to set password for root
     give redhat
+  > #yum install ansible-core -y
   > #exit
 
 #docker exec -it node1 bash
-  > #apt-get update -y
-  > #apt-get install sudo openssh-server iputils-ping net-tools vim -y
+  > #yum -y install iputils vim net-tools firewalld openssh-server openssh-clients sudo epel-release nfs-utils -y
+  By default root login is disabled for security reason, so let's enable it for our practice
   > #vim /etc/ssh/sshd_config
-  Go to line no 42 PermitRootLogin remove comment and make yes
-  > #service ssh start
-  > #Service ssh status
+  Go to line no 40 PermitRootLogin remove comment and make yes
+  > #systemctl start sshd firewalld
+  > #systemctl enable sshd firewalld
   > #passwd -> to set password for root
     give redhat
   > #exit
 
 #docker exec -it node2 bash
-  > #apt-get update -y
-  > #apt-get install sudo openssh-server iputils-ping net-tools vim -y
+  > #yum -y install iputils vim net-tools firewalld openssh-server openssh-clients sudo epel-release nfs-utils -y
+  By default root login is disabled for security reason, so let's enable it for our practice
   > #vim /etc/ssh/sshd_config
-  Go to line no 42 PermitRootLogin remove comment and make yes
-  > #service ssh start
-  > #Service ssh status
+  Go to line no 40 PermitRootLogin remove comment and make yes
+  > #systemctl start sshd firewalld
+  > #systemctl enable sshd firewalld
   > #passwd -> to set password for root
     give redhat
   > #exit
@@ -57,20 +57,12 @@ Copy both IP address
   > #ssh-keygen
   > #ssh-copy-id root@node1
   > #ssh-copy-id root@node2
-  In Ubuntu /etc/ansible/hosts file and /etc/ansible/config is not available as Ansible recommends to create own files
-  Let's mount our NFS so file will be persistent
   > #mkdir /mymount
   > #mount -t nfs <BASE MACHINE IP>:/myshare /mymount 
   > #df -h -> we will see it's mounted
-  > #cd /mymount
-  > #mkdir config
-  > #cd config
-  #vim myservers
+  > #vim /etc/ansible/hosts
   node1
   node2
-  #vim ansible.cfg
-  [defaults]
-  inventory=myservers
   #ansible all -m ping
 
 Let's build our own image using these containers:
