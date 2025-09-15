@@ -5,7 +5,7 @@
 #docker exec -it aserver bash
   > #apt-get update -y
   iptuils-ping for ping command, net-tools for ifconfig command, nfs we will use it for mounting our folder from base system so that our config file and yaml files will be persistent
-  > #apt-get install vim *ansible* openssh-server iputils-ping net-tools nfs* -y
+  > #apt-get install sudo vim *ansible* openssh-server iputils-ping net-tools nfs* -y
   By default root login is disabled for security reason, so let's enable it for our practice
   > #vim /etc/ssh/sshd_config
   Go to line no 42 PermitRootLogin remove comment and make yes
@@ -17,7 +17,7 @@
 
 #docker exec -it node1 bash
   > #apt-get update -y
-  > #apt-get install openssh-server iputils-ping net-tools vim -y
+  > #apt-get install sudo openssh-server iputils-ping net-tools vim -y
   > #vim /etc/ssh/sshd_config
   Go to line no 42 PermitRootLogin remove comment and make yes
   > #service ssh start
@@ -28,7 +28,7 @@
 
 #docker exec -it node2 bash
   > #apt-get update -y
-  > #apt-get install openssh-server iputils-ping net-tools vim -y
+  > #apt-get install sudo openssh-server iputils-ping net-tools vim -y
   > #vim /etc/ssh/sshd_config
   Go to line no 42 PermitRootLogin remove comment and make yes
   > #service ssh start
