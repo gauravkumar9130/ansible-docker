@@ -40,7 +40,8 @@
 Create NFS server on base machine:
 #yum install nfs* -y
 #mkdir /myshare
-#vim /etc/expoerts
+#chmod 777 /myshare
+#vim /etc/exports
 /myshare *(rw,sync)
 #systemctl restart nfs-server
 #systemctl enable nfs-server
